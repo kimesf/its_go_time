@@ -1,10 +1,15 @@
 import styled from "styled-components"
-import { Timer } from "../utils/GoCookiesDatabase"
 import ClockTimeLine from "./ClockTimeLine"
+import { Timer } from "../utils/types"
 
-const Subtask = ({ category, timers, startInMs }: { category: string, timers: Timer[], startInMs: number }) => {
+const Subtask = ({ category, timers, startInMs }:
+  {
+    category: string,
+    timers: Timer[],
+    startInMs: number
+  }) => {
   return (
-    <StyledTimer>
+    <StyledSubtask>
       <ClockTimeLine
         timerCategory={category}
         startInMs={startInMs}
@@ -16,11 +21,11 @@ const Subtask = ({ category, timers, startInMs }: { category: string, timers: Ti
           )
         })}
       </Tags>
-    </StyledTimer>
+    </StyledSubtask>
   )
 }
 
-const StyledTimer = styled.div`
+const StyledSubtask = styled.div`
   margin-top: 4px;
   background-color: lightgray;
   padding: 8px;

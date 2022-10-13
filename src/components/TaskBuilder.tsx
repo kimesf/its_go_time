@@ -1,18 +1,15 @@
-import { useState } from 'react'
-import { AvailableCookies, Timer } from '../utils/GoCookiesDatabase'
-import { MouseEvent } from 'react'
-import { Container } from './sharedstyles'
 import styled from 'styled-components'
-
-interface TimerSelected extends Timer {
-  qty: number
-}
+import { useState, MouseEvent } from 'react'
+import { AvailableCookies } from '../utils/GoCookiesDatabase'
+import { Container } from './sharedstyles'
+import { Timer } from '../utils/types'
+import { timersGroupedByCategory } from '../utils/helpers'
 
 const defaultTimers = AvailableCookies.map((timer) => Object.assign(timer, { qty: 0 }))
 
 const TaskBuilder = ({ handleSubmit }: { handleSubmit: (timers: Timer[]) => void }) => {
   const [isAdding, setIsAdding] = useState<boolean>(false)
-  const [selectedTimers, setSelectedTimers] = useState<TimerSelected[]>(defaultTimers)
+  const [selectedTimers, setSelectedTimers] = useState<Timer[]>(defaultTimers)
 
   const addTask = () => {
     const newTaskTimers = selectedTimers.filter(({ qty }) => qty > 0)
@@ -48,16 +45,6 @@ const TaskBuilder = ({ handleSubmit }: { handleSubmit: (timers: Timer[]) => void
     updateSelectedTimers(name, -1)
   }
 
-  // TODO #1: remove dup
-  const groupBy = (collection: any[], key: string) => {
-    return collection.reduce((result, current) => {
-      const group = current[key]
-      result[group] ||= []
-      result[group].push(current)
-      return result
-    }, {})
-  }
-
   return (
     <Container>
       <Actions>
@@ -70,7 +57,7 @@ const TaskBuilder = ({ handleSubmit }: { handleSubmit: (timers: Timer[]) => void
       </Actions >
       {isAdding &&
         <div>
-          {Object.entries(groupBy(selectedTimers, 'category')).map(([category, timers]) => {
+          {Object.entries(timersGroupedByCategory(selectedTimers)).map(([category, timers]) => {
             return (
               <Category key={category}>
                 <header>

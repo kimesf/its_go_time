@@ -1,8 +1,4 @@
-enum TimerCategory {
-  Normal = 'Normal',
-  Stuffed = 'Stuffed',
-  NewYork = 'NewYork',
-}
+import { TimerCategory } from "./types"
 
 const Categories = {
   Normal: [300, 300, 300],
@@ -10,18 +6,13 @@ const Categories = {
   NewYork: [420, 420, 300],
 } as const
 
-interface Timer {
-  name: string,
-  category: TimerCategory,
-}
-
 const Steps = {
   0: 'Lado 1',
   1: 'Lado 2',
   2: 'Descanso',
 }
 
-const AvailableCookies: Timer[] = [
+const AvailableCookies = [
   {
     name: 'Choco Chip',
     category: TimerCategory.Normal,
@@ -68,4 +59,4 @@ const AvailableCookies: Timer[] = [
   },
 ]
 
-export { AvailableCookies, Categories, Steps, type Timer }
+export { AvailableCookies, Categories, Steps }

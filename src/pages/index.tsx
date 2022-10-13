@@ -1,11 +1,10 @@
-import type { NextPage } from 'next'
-
-import { useState } from 'react'
 import styled from 'styled-components'
+import type { NextPage } from 'next'
+import { useState } from 'react'
+
 import TaskBuilder from '../components/TaskBuilder'
-import Tasks from '../components/Tasks'
-import { Task } from '../components/Tasks'
-import { Timer } from '../utils/GoCookiesDatabase'
+import Tasks, { Task } from '../components/Tasks'
+import { Timer } from '../utils/types'
 
 const App: NextPage = () => {
   const [tasks, setTasks] = useState<Task[]>([])
