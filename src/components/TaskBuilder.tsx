@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { AvailableCookies, Timer } from '../utils/GoCookiesDatabase'
 import { MouseEvent } from 'react'
+import { Container } from './sharedstyles'
 import styled from 'styled-components'
 
 interface TimerSelected extends Timer {
@@ -47,6 +48,7 @@ const TaskBuilder = ({ handleSubmit }: { handleSubmit: (timers: Timer[]) => void
     updateSelectedTimers(name, -1)
   }
 
+  // TODO #1: remove dup
   const groupBy = (collection: any[], key: string) => {
     return collection.reduce((result, current) => {
       const group = current[key]
@@ -55,6 +57,7 @@ const TaskBuilder = ({ handleSubmit }: { handleSubmit: (timers: Timer[]) => void
       return result
     }, {})
   }
+
   return (
     <Container>
       <Actions>
@@ -160,11 +163,6 @@ const Category = styled.section`
   h1 {
     font-size: 1.4rem;
   }
-`
-
-const Container = styled.div`
-  margin: 0 16px 0 16px;
-  background-color: pink;
 `
 
 export default TaskBuilder

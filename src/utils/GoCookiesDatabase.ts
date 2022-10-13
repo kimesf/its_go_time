@@ -4,7 +4,7 @@ enum TimerCategory {
   NewYork = 'NewYork',
 }
 
-const categorys = {
+const Categories = {
   Normal: [300, 300, 300],
   Stuffed: [360, 360, 300],
   NewYork: [420, 420, 300],
@@ -62,4 +62,4 @@ const AvailableCookies: Timer[] = [
   },
 ]
 
-export { AvailableCookies, type Timer }
+export { AvailableCookies, Categories, type Timer }

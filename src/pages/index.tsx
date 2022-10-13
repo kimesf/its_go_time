@@ -1,14 +1,10 @@
 import type { NextPage } from 'next'
 
 import { useState } from 'react'
-import { Timer } from '../utils/GoCookiesDatabase'
 import styled from 'styled-components'
 import TaskBuilder from '../components/TaskBuilder'
-
-interface Task {
-  name: string,
-  timers: Timer[],
-}
+import Timer from '../components/Tasks'
+import { Task } from '../components/Tasks'
 
 const App: NextPage = () => {
   const [tasks, setTasks] = useState<Task[]>([])
@@ -20,6 +16,7 @@ const App: NextPage = () => {
       const newTask = {
         name: 'Default name',
         timers: newTaskTimers,
+        start: Date.now(),
       }
 
       newValue.push(newTask)
@@ -31,10 +28,10 @@ const App: NextPage = () => {
   return (
     <AppWrapper>
       <TaskBuilder handleSubmit={addTask} />
+      <Timer tasks={tasks} />
     </AppWrapper>
   )
 }
-
 
 const AppWrapper = styled.div`
   width: 80vw;
