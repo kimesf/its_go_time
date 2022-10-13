@@ -20,6 +20,8 @@ const groupBy = (collection: any[], key: string) => {
 }
 
 const Tasks = ({ tasks }: { tasks: Task[] }) => {
+  const startedAt = (ms: number) => new Date(ms).toLocaleString('pt-BR')
+
   return (
     <Container>
       {tasks.map(({ name, timers, start }) => {
@@ -27,7 +29,7 @@ const Tasks = ({ tasks }: { tasks: Task[] }) => {
           <StyledTask key={name}>
             <header>
               <h1>{name}</h1>
-              <DateReadable ms={start} />
+              <div>{startedAt(start)}</div>
             </header>
             {Object.entries(groupBy(timers, 'category')).map(([category, timers]) => {
               return (
@@ -38,25 +40,6 @@ const Tasks = ({ tasks }: { tasks: Task[] }) => {
         )
       })}
     </Container>
-  )
-}
-
-const DateReadable = ({ ms }: { ms: number }) => {
-  const formattedTime = () => {
-    const date = new Date(ms)
-    const day = date.getDate()
-    const month = date.getMonth()
-    const hour = date.getHours()
-    const min = date.getMinutes()
-
-    return `${padTime(day)}/${padTime(month)} ${padTime(hour)}:${padTime(min)}`
-  }
-
-  // TODO #2: remove duplication
-  const padTime = (number: number) => number.toString().padStart(2, '0')
-
-  return (
-    <div>{formattedTime()}</div>
   )
 }
 
