@@ -3,6 +3,7 @@ import { Timer } from "../utils/GoCookiesDatabase"
 import { useState, useEffect } from 'react'
 import styled from "styled-components"
 import { Categories } from "../utils/GoCookiesDatabase"
+import Clock from "./Clock"
 
 interface Task {
   name: string,
@@ -20,25 +21,7 @@ const groupBy = (collection: any[], key: string) => {
   }, {})
 }
 
-const useForceUpdate = () => {
-  const [, setValue] = useState(0)
-
-  return () => { setValue(old => old + 1) }
-}
-
 const Timer = ({ tasks }: { tasks: Task[] }) => {
-  const forceUpdate = useForceUpdate()
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      forceUpdate()
-    }, 1000)
-
-    return () => {
-      clearInterval(interval)
-    }
-  }, [])
-
   return (
     <Container>
       {tasks.map(({ name, timers, start }) => {
@@ -46,12 +29,15 @@ const Timer = ({ tasks }: { tasks: Task[] }) => {
           <StyledTask key={name}>
             <header>
               <h1>{name}</h1>
-              <p>Start: {start.toString()}</p>
+              <DateReadable ms={start} />
             </header>
             {Object.entries(groupBy(timers, 'category')).map(([category, timers]) => {
               return (
                 <StyledTimer>
-                  <Clock category={category} start={start} />
+                  <Clock
+                    totalInSec={Categories[category].reduce((acc, current) => acc + current, 0)}
+                    startInMs={start}
+                  />
                   <TimerBody>
                     <Tags>
                       {timers.map(({ name, qty }) => {
@@ -72,27 +58,24 @@ const Timer = ({ tasks }: { tasks: Task[] }) => {
   )
 }
 
-const Clock = ({ category, start }: { category: string, start: number }) => {
+const DateReadable = ({ ms }: { ms: number }) => {
   const formattedTime = () => {
-    const totalInSec = Categories[category].reduce((acc, current) => acc + current, 0)
-    const diffInSec = Math.floor((Date.now() - start) / 1000)
-    const leftInSec = totalInSec - diffInSec
-    const minLeft = Math.floor(leftInSec / 60)
-    const secLeft = leftInSec % 60
+    const date = new Date(ms)
+    const day = date.getDate()
+    const month = date.getMonth()
+    const hour = date.getHours()
+    const min = date.getMinutes()
 
-    return `${padTime(minLeft)}:${padTime(secLeft)}`
+    return `${padTime(day)}/${padTime(month)} ${padTime(hour)}:${padTime(min)}`
   }
 
+  // TODO #2: remove duplication
   const padTime = (number: number) => number.toString().padStart(2, '0')
 
   return (
-    <StyledClock>{formattedTime()}</StyledClock>
+    <div>{formattedTime()}</div>
   )
 }
-
-const StyledClock = styled.div`
-  font-size: 4rem;
-`
 
 const StyledTask = styled.div`
   background-color: yellow;
