@@ -1,9 +1,7 @@
 import { Container } from "./sharedstyles"
 import { Timer } from "../utils/GoCookiesDatabase"
-import { useState, useEffect } from 'react'
 import styled from "styled-components"
-import { Categories } from "../utils/GoCookiesDatabase"
-import ClockTimeLine from "./ClockTimeLine"
+import Subtask from "./Subtask"
 
 interface Task {
   name: string,
@@ -33,19 +31,7 @@ const Tasks = ({ tasks }: { tasks: Task[] }) => {
             </header>
             {Object.entries(groupBy(timers, 'category')).map(([category, timers]) => {
               return (
-                <StyledTimer key={category}>
-                  <ClockTimeLine
-                    timerCategory={category}
-                    startInMs={start}
-                  />
-                  <Tags>
-                    {timers.map(({ name, qty }) => {
-                      return (
-                        <Tag key={name}>{name + ' x' + qty}</Tag>
-                      )
-                    })}
-                  </Tags>
-                </StyledTimer>
+                <Subtask key={category} category={category} timers={timers} startInMs={start} />
               )
             })}
           </StyledTask>
@@ -78,26 +64,6 @@ const StyledTask = styled.div`
   background-color: yellow;
   margin-top: 12px;
   padding: 8px;
-`
-
-const StyledTimer = styled.div`
-  margin-top: 4px;
-  background-color: lightgray;
-  padding: 8px;
-  display: flex;
-  flex-direction: column;
-`
-
-const Tags = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-`
-
-const Tag = styled.div`
-  margin-right: 4px;
-  margin-bottom: 4px;
-  padding: 4px;
-  border: 1px solid black;
 `
 
 export default Tasks
