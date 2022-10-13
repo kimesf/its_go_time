@@ -15,6 +15,12 @@ interface Timer {
   category: TimerCategory,
 }
 
+const Steps = {
+  0: 'Lado 1',
+  1: 'Lado 2',
+  2: 'Descanso',
+}
+
 const AvailableCookies: Timer[] = [
   {
     name: 'Choco Chip',
@@ -62,4 +68,4 @@ const AvailableCookies: Timer[] = [
   },
 ]
 
-export { AvailableCookies, Categories, type Timer }
+export { AvailableCookies, Categories, Steps, type Timer }

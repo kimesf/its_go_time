@@ -3,7 +3,7 @@ import type { NextPage } from 'next'
 import { useState } from 'react'
 import styled from 'styled-components'
 import TaskBuilder from '../components/TaskBuilder'
-import Timer from '../components/Tasks'
+import Tasks from '../components/Tasks'
 import { Task } from '../components/Tasks'
 
 const App: NextPage = () => {
@@ -14,7 +14,7 @@ const App: NextPage = () => {
       const newValue = structuredClone(oldValue)
 
       const newTask = {
-        name: 'Default name',
+        name: 'Pedido# ' + Math.random().toString(),
         timers: newTaskTimers,
         start: Date.now(),
       }
@@ -28,7 +28,7 @@ const App: NextPage = () => {
   return (
     <AppWrapper>
       <TaskBuilder handleSubmit={addTask} />
-      <Timer tasks={tasks} />
+      <Tasks tasks={tasks} />
     </AppWrapper>
   )
 }

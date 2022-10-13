@@ -3,7 +3,7 @@ import { Timer } from "../utils/GoCookiesDatabase"
 import { useState, useEffect } from 'react'
 import styled from "styled-components"
 import { Categories } from "../utils/GoCookiesDatabase"
-import Clock from "./Clock"
+import ClockTimeLine from "./ClockTimeLine"
 
 interface Task {
   name: string,
@@ -21,7 +21,7 @@ const groupBy = (collection: any[], key: string) => {
   }, {})
 }
 
-const Timer = ({ tasks }: { tasks: Task[] }) => {
+const Tasks = ({ tasks }: { tasks: Task[] }) => {
   return (
     <Container>
       {tasks.map(({ name, timers, start }) => {
@@ -33,21 +33,18 @@ const Timer = ({ tasks }: { tasks: Task[] }) => {
             </header>
             {Object.entries(groupBy(timers, 'category')).map(([category, timers]) => {
               return (
-                <StyledTimer>
-                  <Clock
-                    totalInSec={Categories[category].reduce((acc, current) => acc + current, 0)}
+                <StyledTimer key={category}>
+                  <ClockTimeLine
+                    timerCategory={category}
                     startInMs={start}
                   />
-                  <TimerBody>
-                    <Tags>
-                      {timers.map(({ name, qty }) => {
-                        return (
-                          <Tag>{name + ' x' + qty}</Tag>
-                        )
-                      })}
-                    </Tags>
-                    <div>{Categories[category].toString()}</div>
-                  </TimerBody>
+                  <Tags>
+                    {timers.map(({ name, qty }) => {
+                      return (
+                        <Tag key={name}>{name + ' x' + qty}</Tag>
+                      )
+                    })}
+                  </Tags>
                 </StyledTimer>
               )
             })}
@@ -88,11 +85,6 @@ const StyledTimer = styled.div`
   background-color: lightgray;
   padding: 8px;
   display: flex;
-`
-
-const TimerBody = styled.div`
-  margin-left: 8px;
-  display: flex;
   flex-direction: column;
 `
 
@@ -108,5 +100,5 @@ const Tag = styled.div`
   border: 1px solid black;
 `
 
-export default Timer
+export default Tasks
 export { type Task }
