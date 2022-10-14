@@ -1,12 +1,17 @@
 import { Container } from "./sharedstyles"
-import { Task, Timer } from '../utils/types'
+import { AvailableTimerCategories, Task, Timer, TimerCategory } from '../utils/types'
 import styled from "styled-components"
 import Subtask from "./Subtask"
 import { timersGroupedByCategory } from "../utils/helpers"
 
 const Tasks = ({ tasks }: { tasks: Task[] }) => {
   const startedAt = (ms: number) => new Date(ms).toLocaleString('pt-BR')
-  const timersByCategory = (timers: Timer[]) => Object.entries(timersGroupedByCategory(timers))
+
+  const timersByCategory = (timers: Timer[]) => {
+    const grouped = timersGroupedByCategory(timers)
+
+    return Object.entries(grouped)
+  }
 
   return (
     <Container>
@@ -21,7 +26,7 @@ const Tasks = ({ tasks }: { tasks: Task[] }) => {
               return (
                 <Subtask
                   key={category}
-                  category={category}
+                  category={(category as AvailableTimerCategories)}
                   timers={timersGrouped}
                   startInMs={start}
                 />

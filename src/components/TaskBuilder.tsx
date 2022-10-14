@@ -5,11 +5,9 @@ import { Container } from './sharedstyles'
 import { Timer } from '../utils/types'
 import { timersGroupedByCategory } from '../utils/helpers'
 
-const defaultTimers = AvailableCookies.map((timer) => Object.assign(timer, { qty: 0 }))
-
 const TaskBuilder = ({ handleSubmit }: { handleSubmit: (timers: Timer[]) => void }) => {
   const [isAdding, setIsAdding] = useState<boolean>(false)
-  const [selectedTimers, setSelectedTimers] = useState<Timer[]>(defaultTimers)
+  const [selectedTimers, setSelectedTimers] = useState(AvailableCookies)
 
   const addTask = () => {
     const newTaskTimers = selectedTimers.filter(({ qty }) => qty > 0)
@@ -21,7 +19,7 @@ const TaskBuilder = ({ handleSubmit }: { handleSubmit: (timers: Timer[]) => void
 
   const toggleIsAdding = () => {
     setIsAdding(prev => !prev)
-    setSelectedTimers(defaultTimers)
+    setSelectedTimers(AvailableCookies)
   }
 
   const updateSelectedTimers = (selectedName: string, qtyChange: number) => {

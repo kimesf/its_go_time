@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react"
 import styled from "styled-components"
 import { Categories, StepNames, StepDoneWarnings } from "../utils/GoCookiesDatabase"
+import { StepIndex, TimerCategory } from "../utils/types"
 
 const useForceUpdate = () => {
   const [, setValue] = useState(0)
@@ -10,24 +11,27 @@ const useForceUpdate = () => {
 
 const ClockTimeLine = ({ timerCategory, startInMs, alarmHandler }:
   {
-    timerCategory: string,
+    timerCategory: keyof typeof TimerCategory,
     startInMs: number
     alarmHandler: (message: string) => void,
   }) => {
   const forceUpdate = useForceUpdate()
-  const timesInSec = Categories[timerCategory]
-  const totalInSec = timesInSec.reduce((acc, current) => acc + current)
-  const passedInSec = Math.floor((Date.now() - startInMs) / 1000)
-  const leftInSec = totalInSec - passedInSec
+  const [timesInSec, totalInSec, warningTimes] = useMemo(() => {
+    const timesInSec = Categories[timerCategory]
+    const totalInSec = timesInSec.reduce((acc, current) => acc + current)
 
-  const warningTimes = useMemo(() => {
     let currentSum = 0
-    return timesInSec.reduce((acc, time) => {
+    const warningTimes = timesInSec.reduce((acc: number[], time: number) => {
       currentSum += time
 
       return [...acc, currentSum]
     }, [])
-  }, [])
+
+    return [timesInSec, totalInSec, warningTimes]
+  }, [timerCategory])
+
+  const passedInSec = Math.floor((Date.now() - startInMs) / 1000)
+  const leftInSec = totalInSec - passedInSec
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -37,7 +41,7 @@ const ClockTimeLine = ({ timerCategory, startInMs, alarmHandler }:
     return () => {
       clearInterval(interval)
     }
-  }, [])
+  }, [forceUpdate])
 
   useEffect(() => {
     maybeSetAlarm()
@@ -67,7 +71,11 @@ const ClockTimeLine = ({ timerCategory, startInMs, alarmHandler }:
     }, 0)
   }
 
-  const stepSeconds = (stepTimeInSec: number, currentStep: number, stepSecs: number[]) => {
+  const stepSeconds = (
+    stepTimeInSec: number,
+    currentStep: StepIndex,
+    stepSecs: number[]
+  ): JSX.Element => {
     const stepMin = sumTil(stepSecs, currentStep)
     const stepMax = sumTil(stepSecs, currentStep + 1)
 

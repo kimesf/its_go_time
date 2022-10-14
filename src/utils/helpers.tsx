@@ -1,15 +1,17 @@
-import { TimerCategory, Timer } from "./types"
+import { Timer, AvailableTimerCategories } from "./types"
 
-type GroupedTimers = {
-  [Property in keyof TimerCategory]: Timer[]
+type TimersGrouped = {
+  [K in AvailableTimerCategories]?: Timer[]
 }
 
-const timersGroupedByCategory = (collection: any[]): GroupedTimers => {
-  return collection.reduce((result, current) => {
-    const group = current['category']
-    result[group] ||= []
-    result[group].push(current)
-    return result
+const timersGroupedByCategory = (collection: Timer[]): TimersGrouped => {
+  return collection.reduce((acc: TimersGrouped, current) => {
+    const group: AvailableTimerCategories = current['category']
+
+    acc[group] ||= []
+    acc[group]?.push(current)
+
+    return acc
   }, {})
 }
 

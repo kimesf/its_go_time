@@ -1,11 +1,11 @@
 import styled from "styled-components"
 import ClockTimeLine from "./ClockTimeLine"
-import { Timer } from "../utils/types"
+import { Timer, TimerCategory } from "../utils/types"
 import { useState } from "react"
 
 const Subtask = ({ category, timers, startInMs }:
   {
-    category: string,
+    category: keyof typeof TimerCategory,
     timers: Timer[],
     startInMs: number
   }) => {
