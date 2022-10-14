@@ -1,6 +1,7 @@
 import styled from "styled-components"
 import ClockTimeLine from "./ClockTimeLine"
 import { Timer } from "../utils/types"
+import { useState } from "react"
 
 const Subtask = ({ category, timers, startInMs }:
   {
@@ -8,11 +9,31 @@ const Subtask = ({ category, timers, startInMs }:
     timers: Timer[],
     startInMs: number
   }) => {
+  const [alarmSound,] = useState(new Audio('/alarmSound.mp3'))
+  const [isWarning, setIsWarning] = useState<boolean>(false)
+  const [alarmMessage, setAlarmMessage] = useState<string>('no message set')
+
+  const setAlarm = (message: string) => {
+    setIsWarning(true)
+    setAlarmMessage(message)
+    alarmSound.play()
+  }
+
+  const clearWarning = () => {
+    setIsWarning(false)
+    setAlarmMessage('')
+    alarmSound.pause()
+  }
+
   return (
     <StyledSubtask>
+      {isWarning && <Warning onClick={clearWarning}>
+        <h1>{alarmMessage}</h1>
+      </Warning>}
       <ClockTimeLine
         timerCategory={category}
         startInMs={startInMs}
+        alarmHandler={setAlarm}
       />
       <Tags>
         {timers.map(({ name, qty }) => {
@@ -31,6 +52,15 @@ const StyledSubtask = styled.div`
   padding: 8px;
   display: flex;
   flex-direction: column;
+  position: relative;
+`
+
+const Warning = styled.div`
+  position: absolute;
+  top: 50%;
+  left: -92px;
+  text-transform: uppercase;
+  font-weight: bold;
 `
 
 const Tags = styled.div`

@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import styled from "styled-components"
-import { Categories, Steps } from "../utils/GoCookiesDatabase"
+import { Categories, StepNames, StepDoneWarnings } from "../utils/GoCookiesDatabase"
 
 const useForceUpdate = () => {
   const [, setValue] = useState(0)
@@ -8,11 +8,26 @@ const useForceUpdate = () => {
   return () => { setValue(old => old + 1) }
 }
 
-const ClockTimeLine = ({ timerCategory, startInMs }: { timerCategory: string, startInMs: number }) => {
+const ClockTimeLine = ({ timerCategory, startInMs, alarmHandler }:
+  {
+    timerCategory: string,
+    startInMs: number
+    alarmHandler: (message: string) => void,
+  }) => {
   const forceUpdate = useForceUpdate()
-  const totalInSec = Categories[timerCategory].reduce((acc, current) => acc + current)
+  const timesInSec = Categories[timerCategory]
+  const totalInSec = timesInSec.reduce((acc, current) => acc + current)
   const passedInSec = Math.floor((Date.now() - startInMs) / 1000)
   const leftInSec = totalInSec - passedInSec
+
+  const warningTimes = useMemo(() => {
+    let currentSum = 0
+    return timesInSec.reduce((acc, time) => {
+      currentSum += time
+
+      return [...acc, currentSum]
+    }, [])
+  }, [])
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -23,6 +38,18 @@ const ClockTimeLine = ({ timerCategory, startInMs }: { timerCategory: string, st
       clearInterval(interval)
     }
   }, [])
+
+  useEffect(() => {
+    maybeSetAlarm()
+  })
+
+  const maybeSetAlarm = () => {
+    if (warningTimes.includes(passedInSec)) {
+      const warningIndex: keyof typeof StepDoneWarnings = warningTimes.indexOf(passedInSec)
+
+      alarmHandler(StepDoneWarnings[warningIndex])
+    }
+  }
 
   const formatSeconds = (seconds: number) => {
     const minLeft = Math.floor(seconds / 60)
@@ -43,15 +70,12 @@ const ClockTimeLine = ({ timerCategory, startInMs }: { timerCategory: string, st
   const stepSeconds = (stepTimeInSec: number, currentStep: number, stepSecs: number[]) => {
     const stepMin = sumTil(stepSecs, currentStep)
     const stepMax = sumTil(stepSecs, currentStep + 1)
-    const stepFull = stepSecs.reduce((acc, val) => acc + val)
 
     const timerSecs = () => {
-      const currentSec = stepFull - leftInSec
+      if (passedInSec < stepMin) return stepTimeInSec
+      if (passedInSec > stepMax) return 0
 
-      if (currentSec < stepMin) return stepTimeInSec
-      if (currentSec > stepMax) return 0
-
-      const timeFromNextSteps = stepFull - stepMax
+      const timeFromNextSteps = totalInSec - stepMax
 
       return leftInSec - timeFromNextSteps
     }
@@ -59,7 +83,7 @@ const ClockTimeLine = ({ timerCategory, startInMs }: { timerCategory: string, st
     return (
       <Step key={currentStep}>
         <div>{formatSeconds(timerSecs())}</div>
-        <div>{Steps[currentStep]}</div>
+        <div>{StepNames[currentStep]}</div>
       </Step>
     )
   }
@@ -71,7 +95,7 @@ const ClockTimeLine = ({ timerCategory, startInMs }: { timerCategory: string, st
     <StyledClock>
       <ActualClock>{formatSeconds(leftInSec)}</ActualClock>
       <Timeline>
-        {Categories[timerCategory].map(stepSeconds)}
+        {timesInSec.map(stepSeconds)}
       </Timeline>
     </StyledClock>
   )

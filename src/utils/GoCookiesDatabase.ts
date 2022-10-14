@@ -1,16 +1,22 @@
 import { TimerCategory } from "./types"
 
 const Categories = {
-  Normal: [300, 300, 300],
-  Stuffed: [360, 360, 300],
-  NewYork: [420, 420, 300],
+  Normal: [5, 5, 5],
+  Stuffed: [6, 6, 5],
+  NewYork: [7, 7, 5],
 } as const
 
-const Steps = {
+const StepNames = {
   0: 'Lado 1',
   1: 'Lado 2',
   2: 'Descanso',
-}
+} as const
+
+const StepDoneWarnings = {
+  0: 'Virar!',
+  1: 'Tirar!',
+  2: 'Pronto!',
+} as const
 
 const AvailableCookies = [
   {
@@ -59,4 +65,4 @@ const AvailableCookies = [
   },
 ]
 
-export { AvailableCookies, Categories, Steps }
+export { AvailableCookies, Categories, StepNames, StepDoneWarnings }
