@@ -90,8 +90,8 @@ const ClockTimeLine = ({ timerCategory, startInMs, alarmHandler }:
 
     return (
       <Step key={currentStep}>
-        <div>{formatSeconds(timerSecs())}</div>
-        <div>{StepNames[currentStep]}</div>
+        <StepClock>{formatSeconds(timerSecs())}</StepClock>
+        <StepName>{StepNames[currentStep]}</StepName>
       </Step>
     )
   }
@@ -115,6 +115,8 @@ const StyledClock = styled.div`
 
 const ActualClock = styled.div`
   font-size: 4rem;
+  font-family: monospace;
+  padding: 4px;
 `
 
 const Timeline = styled.div`
@@ -124,6 +126,17 @@ const Timeline = styled.div`
   width: 100%;
 `
 
-const Step = styled.div``
+const Step = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`
+
+const StepClock = styled.div`
+  font-size: 1.4rem;
+  font-family: monospace;
+`
+
+const StepName = styled.div``
 
 export default ClockTimeLine

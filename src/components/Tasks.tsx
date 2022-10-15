@@ -18,9 +18,7 @@ const Tasks = ({ tasks }: { tasks: Task[] }) => {
       {tasks.map(({ timers, start }) => {
         return (
           <StyledTask key={start}>
-            <header>
-              <div>{startedAt(start)}</div>
-            </header>
+            <TaskName>{startedAt(start)}</TaskName>
             {timersByCategory(timers).map(([category, timersGrouped]) => {
               return (
                 <Subtask
@@ -39,9 +37,16 @@ const Tasks = ({ tasks }: { tasks: Task[] }) => {
 }
 
 const StyledTask = styled.div`
-  background-color: yellow;
   margin-top: 12px;
   padding: 8px;
+  box-shadow: 5px 2px 20px lightgrey;
+  /* TODO #4 move to css var */
+  border-top: 5px solid #f07066;
+`
+
+const TaskName = styled.div`
+  margin: 4px 0 4px;
+  font-size: 1.2rem;
 `
 
 export default Tasks

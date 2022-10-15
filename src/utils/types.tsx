@@ -16,7 +16,9 @@ enum StepIndex {
 interface Timer {
   name: string,
   category: AvailableTimerCategories,
-  qty: number
+  qty: number,
+  fontColor: string,
+  backgroundColor: string,
 }
 
 interface Task {

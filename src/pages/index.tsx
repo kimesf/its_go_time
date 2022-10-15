@@ -26,7 +26,10 @@ const App: NextPage = () => {
 
   return (
     <AppWrapper>
-      <TaskBuilder handleSubmit={addTask} />
+      <TaskBuilder
+        handleSubmit={addTask}
+        title='Its Go Time'
+      />
       <Tasks tasks={tasks} />
     </AppWrapper>
   )
@@ -34,8 +37,7 @@ const App: NextPage = () => {
 
 const AppWrapper = styled.div`
   width: 80vw;
-  margin: auto;
-  background-color: blue;
+  margin: 16px auto;
 `
 
 export default App

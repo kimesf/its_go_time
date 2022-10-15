@@ -1,0 +1,9 @@
+{
+  "presets": [
+    "next/babel"
+  ],
+  "plugins": [
+    "macros",
+    "babel-plugin-styled-components"
+  ]
+}
