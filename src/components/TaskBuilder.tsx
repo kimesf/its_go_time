@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { useState, MouseEvent } from 'react'
-import { AvailableCookies } from '../utils/GoCookiesDatabase'
+import { AvailableCookies } from '../utils/goCookiesDatabase'
 import { Container } from './sharedstyles'
 import { Timer } from '../utils/types'
 import { timersGroupedByCategory } from '../utils/helpers'

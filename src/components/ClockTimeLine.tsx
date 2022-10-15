@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react"
 import styled from "styled-components"
-import { Categories, StepNames, StepDoneWarnings } from "../utils/GoCookiesDatabase"
+import { Categories, StepNames, StepDoneWarnings } from "../utils/goCookiesDatabase"
 import { StepIndex, TimerCategory } from "../utils/types"
 
 const useForceUpdate = () => {

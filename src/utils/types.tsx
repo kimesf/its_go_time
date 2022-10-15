@@ -20,7 +20,6 @@ interface Timer {
 }
 
 interface Task {
-  name: string,
   timers: Timer[],
   start: number,
 }

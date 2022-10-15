@@ -14,7 +14,6 @@ const App: NextPage = () => {
       const newValue = structuredClone(oldValue)
 
       const newTask = {
-        name: 'Pedido# ' + Math.random().toString(),
         timers: newTaskTimers,
         start: Date.now(),
       }

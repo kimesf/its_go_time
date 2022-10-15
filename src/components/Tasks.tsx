@@ -15,11 +15,10 @@ const Tasks = ({ tasks }: { tasks: Task[] }) => {
 
   return (
     <Container>
-      {tasks.map(({ name, timers, start }) => {
+      {tasks.map(({ timers, start }) => {
         return (
-          <StyledTask key={name}>
+          <StyledTask key={start}>
             <header>
-              <h1>{name}</h1>
               <div>{startedAt(start)}</div>
             </header>
             {timersByCategory(timers).map(([category, timersGrouped]) => {
