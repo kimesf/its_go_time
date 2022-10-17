@@ -3,46 +3,65 @@ import { AvailableTimerCategories, Task, Timer, TimerCategory } from '../utils/t
 import styled from "styled-components"
 import Subtask from "./Subtask"
 import { timersGroupedByCategory } from "../utils/helpers"
+import { useState } from "react"
+import build from "next/dist/build"
 
 const Tasks = ({ tasks }: { tasks: Task[] }) => {
-  const startedAt = (ms: number) => new Date(ms).toLocaleString('pt-BR')
-
-  const timersByCategory = (timers: Timer[]) => {
-    const grouped = timersGroupedByCategory(timers)
-
-    return Object.entries(grouped)
-  }
-
   const orderedTasks = structuredClone(tasks).reverse()
 
   return (
     <Container>
       {orderedTasks.map(({ timers, start }) => {
         return (
-          <StyledTask key={start}>
-            <TaskName>{startedAt(start)}</TaskName>
-            {timersByCategory(timers).map(([category, timersGrouped]) => {
-              return (
-                <Subtask
-                  key={category}
-                  category={(category as AvailableTimerCategories)}
-                  timers={timersGrouped}
-                  startInMs={start}
-                />
-              )
-            })}
-          </StyledTask>
+          <TaskView key={start} start={start} timers={timers}></TaskView>
         )
       })}
     </Container>
   )
 }
 
-const StyledTask = styled.div`
+const TaskView = ({ start, timers }: { start: number, timers: Timer[] }) => {
+  const groupedTimers = Object.entries(timersGroupedByCategory(timers))
+  const [subtasksAreDone, setSubtasksAreDone] = useState(groupedTimers.map(() => false))
+
+  const buildSetSubtaskDoneFn = (subtaskIndex: number): () => void => {
+    return () => {
+      setSubtasksAreDone((oldValue) => {
+        const newValue = structuredClone(oldValue)
+
+        newValue[subtaskIndex] = true
+
+        return newValue
+      })
+    }
+  }
+
+  const startedAt = (ms: number) => new Date(ms).toLocaleString('pt-BR')
+
+  return (
+    <StyledTask isDone={subtasksAreDone.every((isDone) => isDone)}>
+      <TaskName>{startedAt(start)}</TaskName>
+      {groupedTimers.map(([category, timersGrouped], subtaskIndex) => {
+        return (
+          <Subtask
+            handleDone={buildSetSubtaskDoneFn(subtaskIndex)}
+            key={category}
+            category={(category as AvailableTimerCategories)}
+            timers={timersGrouped}
+            startInMs={start}
+          />
+        )
+      })}
+    </StyledTask>
+  )
+}
+
+const StyledTask = styled.div<{ isDone: boolean }>`
+  ${props => props.isDone && 'filter: grayscale(1);'};
   margin-top: 12px;
   padding: 8px;
   box-shadow: 5px 2px 20px lightgrey;
-  /* TODO #4 move to css var */
+  /* TODO move to css var */
   border-top: 5px solid #f07066;
 `
 

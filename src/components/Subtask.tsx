@@ -5,16 +5,22 @@ import { useState } from "react"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { solid } from '@fortawesome/fontawesome-svg-core/import.macro'
 
-
-const Subtask = ({ category, timers, startInMs }:
+const Subtask = ({ category, timers, startInMs, handleDone }:
   {
     category: keyof typeof TimerCategory,
     timers: Timer[],
-    startInMs: number
+    startInMs: number,
+    handleDone: () => void,
   }) => {
+  const [isDone, setIsDone] = useState(false)
   const [alarmSound,] = useState(new Audio('/alarmSound.mp3'))
   const [isWarning, setIsWarning] = useState<boolean>(false)
   const [alarmMessage, setAlarmMessage] = useState<string>('no message set')
+
+  const setDone = () => {
+    setIsDone(true)
+    handleDone()
+  }
 
   const setAlarm = (message: string) => {
     setIsWarning(true)
@@ -29,7 +35,7 @@ const Subtask = ({ category, timers, startInMs }:
   }
 
   return (
-    <StyledSubtask>
+    <StyledSubtask isDone={isDone}>
       {isWarning && <WarnBar />}
       {isWarning && <Warning onClick={clearWarning}>
         <span>
@@ -41,6 +47,8 @@ const Subtask = ({ category, timers, startInMs }:
         timerCategory={category}
         startInMs={startInMs}
         alarmHandler={setAlarm}
+        isDone={isDone}
+        setDone={setDone}
       />
       <Tags>
         {timers.map(({ name, qty, fontColor, backgroundColor }) => {
@@ -59,7 +67,8 @@ const Subtask = ({ category, timers, startInMs }:
   )
 }
 
-const StyledSubtask = styled.div`
+const StyledSubtask = styled.div<{ isDone: boolean }>`
+  ${props => props.isDone && 'filter: grayscale(1);'}
   border: 1px solid lightgrey;
   padding: 8px;
   display: flex;

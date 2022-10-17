@@ -3,15 +3,15 @@ import styled from "styled-components"
 import { Categories, StepNames, StepDoneWarnings } from "../utils/goCookiesDatabase"
 import { StepIndex, TimerCategory, AvailableTimerCategories } from "../utils/types"
 
-const ClockTimeLine = ({ timerCategory, startInMs, alarmHandler }:
+const ClockTimeLine = ({ timerCategory, startInMs, alarmHandler, isDone, setDone }:
   {
     timerCategory: AvailableTimerCategories,
     startInMs: number
     alarmHandler: (message: string) => void,
+    isDone: boolean,
+    setDone: () => void,
   }) => {
   const forceRerender = useForceRerender()
-
-  const [isDone, setIsDone] = useState(false)
 
   const [
     secondsPassed,
@@ -23,7 +23,7 @@ const ClockTimeLine = ({ timerCategory, startInMs, alarmHandler }:
   useEffect(() => {
     if (secondsRemaining > 0 || isDone) return
 
-    setIsDone(true)
+    setDone()
   })
 
   useEffect(() => {
@@ -59,21 +59,21 @@ const ClockTimeLine = ({ timerCategory, startInMs, alarmHandler }:
   }
 
   return (
-    <StyledClock>
+    <StyledClockTimeline>
       <ActualClock>{formatSeconds(secondsRemaining)}</ActualClock>
       <Timeline>
         {stepsSecondsRemaining.map((stepSecondsRemaining, stepIndex) =>
           <Step key={stepIndex}>
             <StepClock>{formatSeconds(stepSecondsRemaining)}</StepClock>
-            <StepName>{stepName(stepIndex as StepIndex)}</StepName>
+            <div>{stepName(stepIndex as StepIndex)}</div>
           </Step>
         )}
       </Timeline>
-    </StyledClock>
+    </StyledClockTimeline>
   )
 }
 
-const StyledClock = styled.div`
+const StyledClockTimeline = styled.div`
   display: flex;
 `
 
@@ -100,8 +100,6 @@ const StepClock = styled.div`
   font-size: 1.4rem;
   font-family: monospace;
 `
-
-const StepName = styled.div``
 
 const useForceRerender = () => {
   const [, setValue] = useState(0)
