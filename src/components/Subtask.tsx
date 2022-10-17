@@ -1,7 +1,7 @@
 import styled, { keyframes } from "styled-components"
 import ClockTimeLine from "./ClockTimeLine"
 import { Timer, TimerCategory } from "../utils/types"
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { solid } from '@fortawesome/fontawesome-svg-core/import.macro'
 
@@ -12,6 +12,7 @@ const Subtask = ({ category, timers, startInMs, handleDone }:
     startInMs: number,
     handleDone: () => void,
   }) => {
+  const subtaskRef = useRef<HTMLDivElement | null>(null)
   const [isDone, setIsDone] = useState(false)
   const [alarmSound,] = useState(new Audio('/alarmSound.mp3'))
   const [isWarning, setIsWarning] = useState<boolean>(false)
@@ -26,6 +27,7 @@ const Subtask = ({ category, timers, startInMs, handleDone }:
     setIsWarning(true)
     setAlarmMessage(message)
     alarmSound.play()
+    subtaskRef.current?.scrollIntoView(false)
   }
 
   const clearWarning = () => {
@@ -35,7 +37,7 @@ const Subtask = ({ category, timers, startInMs, handleDone }:
   }
 
   return (
-    <StyledSubtask isDone={isDone}>
+    <StyledSubtask ref={subtaskRef} isDone={isDone}>
       {isWarning && <WarnBar />}
       {isWarning && <Warning onClick={clearWarning}>
         <span>
