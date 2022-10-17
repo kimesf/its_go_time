@@ -130,7 +130,7 @@ const useClockTimes = (
 
   const totalSeconds = useMemo(() => {
     return stepsSeconds.reduce((acc, current) => acc + current)
-  }, stepsSeconds)
+  }, [stepsSeconds])
 
   const secondsPassed = Math.floor((Date.now() - startInMs) / 1000)
   const secondsRemaining = totalSeconds - secondsPassed

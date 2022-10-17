@@ -29,7 +29,7 @@ const App: NextPage = () => {
 
   useEffect(() => {
     setTasks(getStoredTasks())
-  }, [])
+  }, [getStoredTasks])
 
   const addTask = (newTaskTimers: Timer[]) => {
     setTasks((oldValue) => {
