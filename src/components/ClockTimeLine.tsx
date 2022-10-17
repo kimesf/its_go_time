@@ -1,109 +1,73 @@
 import { useState, useEffect, useMemo } from "react"
 import styled from "styled-components"
 import { Categories, StepNames, StepDoneWarnings } from "../utils/goCookiesDatabase"
-import { StepIndex, TimerCategory } from "../utils/types"
-
-const useForceUpdate = () => {
-  const [, setValue] = useState(0)
-
-  return () => { setValue(old => old + 1) }
-}
+import { StepIndex, TimerCategory, AvailableTimerCategories } from "../utils/types"
 
 const ClockTimeLine = ({ timerCategory, startInMs, alarmHandler }:
   {
-    timerCategory: keyof typeof TimerCategory,
+    timerCategory: AvailableTimerCategories,
     startInMs: number
     alarmHandler: (message: string) => void,
   }) => {
-  const forceUpdate = useForceUpdate()
-  const [timesInSec, totalInSec, warningTimes] = useMemo(() => {
-    const timesInSec = Categories[timerCategory]
-    const totalInSec = timesInSec.reduce((acc, current) => acc + current)
+  const forceRerender = useForceRerender()
 
-    let currentSum = 0
-    const warningTimes = timesInSec.reduce((acc: number[], time: number) => {
-      currentSum += time
+  const [isDone, setIsDone] = useState(false)
 
-      return [...acc, currentSum]
-    }, [])
-
-    return [timesInSec, totalInSec, warningTimes]
-  }, [timerCategory])
-
-  const passedInSec = Math.floor((Date.now() - startInMs) / 1000)
-  const leftInSec = totalInSec - passedInSec
+  const [
+    secondsPassed,
+    secondsRemaining,
+    stepsSecondsRemaining,
+    warningTimes,
+  ] = useClockTimes(startInMs, timerCategory)
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      forceUpdate()
-    }, 1000)
+    if (secondsRemaining > 0 || isDone) return
 
-    return () => {
-      clearInterval(interval)
-    }
-  }, [forceUpdate])
-
-  useEffect(() => {
-    maybeSetAlarm()
+    setIsDone(true)
   })
 
-  const maybeSetAlarm = () => {
-    if (warningTimes.includes(passedInSec)) {
-      const warningIndex: keyof typeof StepDoneWarnings = warningTimes.indexOf(passedInSec)
+  useEffect(() => {
+    if (!warningTimes.includes(secondsPassed)) return
 
-      alarmHandler(StepDoneWarnings[warningIndex])
-    }
-  }
+    const warningIndex: keyof typeof StepDoneWarnings =
+      warningTimes.indexOf(secondsPassed)
+
+    const alarmMessage = StepDoneWarnings[warningIndex]
+
+    alarmHandler(alarmMessage)
+  })
+
+  useEffect(() => {
+    if (isDone) return
+
+    setTimeout(forceRerender, 1000)
+  }, [isDone, forceRerender])
+
+  const stepName = (key: StepIndex) => StepNames[key as StepIndex]
 
   const formatSeconds = (seconds: number) => {
-    const minLeft = Math.floor(seconds / 60)
-    const secLeft = seconds % 60
-    if (minLeft < 0 || secLeft < 0) return '00:00'
+    const minutesLeft = Math.floor(seconds / 60)
+    const secondsLeft = seconds % 60
 
-    return `${padTime(minLeft)}:${padTime(secLeft)}`
-  }
-
-  const sumTil = (numbers: number[], tilIndex: number) => {
-    return numbers.reduce((acc, currentValue, index) => {
-      const increment = index < tilIndex ? currentValue : 0
-
-      return acc + increment
-    }, 0)
-  }
-
-  const stepSeconds = (
-    stepTimeInSec: number,
-    currentStep: StepIndex,
-    stepSecs: number[]
-  ): JSX.Element => {
-    const stepMin = sumTil(stepSecs, currentStep)
-    const stepMax = sumTil(stepSecs, currentStep + 1)
-
-    const timerSecs = () => {
-      if (passedInSec < stepMin) return stepTimeInSec
-      if (passedInSec > stepMax) return 0
-
-      const timeFromNextSteps = totalInSec - stepMax
-
-      return leftInSec - timeFromNextSteps
+    if (minutesLeft < 0 || secondsLeft < 0) {
+      return '00:00'
     }
 
-    return (
-      <Step key={currentStep}>
-        <StepClock>{formatSeconds(timerSecs())}</StepClock>
-        <StepName>{StepNames[currentStep]}</StepName>
-      </Step>
-    )
-  }
+    const padTime = (number: number) => number.toString().padStart(2, '0')
 
-  // TODO #2: remove duplication
-  const padTime = (number: number) => number.toString().padStart(2, '0')
+    return [minutesLeft, secondsLeft].map(padTime).join(':')
+  }
 
   return (
     <StyledClock>
-      <ActualClock>{formatSeconds(leftInSec)}</ActualClock>
+      <ActualClock>{formatSeconds(secondsRemaining)}</ActualClock>
       <Timeline>
-        {timesInSec.map(stepSeconds)}
+        {stepsSecondsRemaining.map((stepSecondsRemaining, stepIndex) =>
+          <Step key={stepIndex}>
+            <StepClock>{formatSeconds(stepSecondsRemaining)}</StepClock>
+            <StepName>{stepName(stepIndex as StepIndex)}</StepName>
+          </Step>
+        )}
       </Timeline>
     </StyledClock>
   )
@@ -138,5 +102,62 @@ const StepClock = styled.div`
 `
 
 const StepName = styled.div``
+
+const useForceRerender = () => {
+  const [, setValue] = useState(0)
+
+  return () => { setValue(old => old + 1) }
+}
+
+const useClockTimes = (
+  startInMs: number,
+  timerCategory: AvailableTimerCategories,
+): [
+    number,
+    number,
+    number[],
+    number[],
+  ] => {
+
+  const stepsSeconds = Categories[timerCategory]
+
+  const warningTimes = useMemo(() => {
+    let currentSum = 0
+    return stepsSeconds.reduce((acc: number[], time: number) => {
+      currentSum += time
+
+      return [...acc, currentSum]
+    }, [])
+  }, [stepsSeconds])
+
+  const totalSeconds = useMemo(() => {
+    return stepsSeconds.reduce((acc, current) => acc + current)
+  }, stepsSeconds)
+
+  const secondsPassed = Math.floor((Date.now() - startInMs) / 1000)
+  const secondsRemaining = totalSeconds - secondsPassed
+
+  const sumTil = (numbers: number[], tilIndex: number) => {
+    return numbers.reduce((acc, currentValue, index) => {
+      const increment = index < tilIndex ? currentValue : 0
+
+      return acc + increment
+    }, 0)
+  }
+
+  const stepsSecondsRemaining = stepsSeconds.map((stepSeconds, stepIndex) => {
+    const stepMin = sumTil(stepsSeconds, stepIndex)
+    const stepMax = sumTil(stepsSeconds, stepIndex + 1)
+
+    if (secondsPassed < stepMin) return stepSeconds
+    if (secondsPassed > stepMax) return 0
+
+    const timeFromNextSteps = totalSeconds - stepMax
+
+    return secondsRemaining - timeFromNextSteps
+  })
+
+  return [secondsPassed, secondsRemaining, stepsSecondsRemaining, warningTimes]
+}
 
 export default ClockTimeLine
