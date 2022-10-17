@@ -1,15 +1,9 @@
 import { Timer, TimerCategory, StepIndex } from "./types"
 
-// const Categories = {
-//   Normal: [300, 300, 300],
-//   Stuffed: [360, 360, 300],
-//   NewYork: [420, 420, 300],
-// }
-
 const Categories = {
-  Normal: [5, 5, 5],
-  Stuffed: [6, 6, 5],
-  NewYork: [7, 7, 5],
+  Normal: [300, 300, 300],
+  Stuffed: [360, 360, 300],
+  NewYork: [420, 420, 300],
 }
 
 const CategoriesI18n = {
