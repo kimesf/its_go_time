@@ -13,9 +13,11 @@ const Tasks = ({ tasks }: { tasks: Task[] }) => {
     return Object.entries(grouped)
   }
 
+  const orderedTasks = structuredClone(tasks).reverse()
+
   return (
     <Container>
-      {tasks.map(({ timers, start }) => {
+      {orderedTasks.map(({ timers, start }) => {
         return (
           <StyledTask key={start}>
             <TaskName>{startedAt(start)}</TaskName>
