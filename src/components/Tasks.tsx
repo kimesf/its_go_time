@@ -7,11 +7,11 @@ import { useState } from "react"
 import build from "next/dist/build"
 
 const Tasks = ({ tasks }: { tasks: Task[] }) => {
-  const orderedTasks = structuredClone(tasks).reverse()
+  const orderedTasks = (): Task[] => JSON.parse(JSON.stringify(tasks)).reverse()
 
   return (
     <Container>
-      {orderedTasks.map(({ timers, start }) => {
+      {orderedTasks().map(({ timers, start }) => {
         return (
           <TaskView key={start} start={start} timers={timers}></TaskView>
         )
