@@ -29,7 +29,8 @@ const App: NextPage = () => {
 
   useEffect(() => {
     setTasks(getStoredTasks())
-  }, [getStoredTasks])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const addTask = (newTaskTimers: Timer[]) => {
     setTasks((oldValue) => {
