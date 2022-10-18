@@ -28,6 +28,12 @@ const App: NextPage = () => {
   const [tasks, setTasks] = useState<Task[]>([])
 
   useEffect(() => {
+    if (Notification.permission != 'granted') {
+      Notification.requestPermission()
+    }
+  })
+
+  useEffect(() => {
     setTasks(getStoredTasks())
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

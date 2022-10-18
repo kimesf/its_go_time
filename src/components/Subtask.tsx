@@ -24,8 +24,15 @@ const Subtask = ({ category, timers, startInMs, handleDone }:
   }
 
   const setAlarm = (message: string) => {
-    setIsWarning(true)
     setAlarmMessage(message)
+
+    if (isWarning) {
+      return
+    }
+
+    setIsWarning(true)
+    // TODO: use i18n
+    new Notification('Um pedido requer atenção!')
     alarmSound.play()
     subtaskRef.current?.scrollIntoView(false)
   }
