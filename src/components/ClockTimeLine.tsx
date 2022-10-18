@@ -1,3 +1,4 @@
+import { clear } from "console"
 import { useState, useEffect, useMemo } from "react"
 import styled from "styled-components"
 import { Categories, StepNames, StepDoneWarnings } from "../utils/goCookiesDatabase"
@@ -40,7 +41,9 @@ const ClockTimeLine = ({ timerCategory, startInMs, alarmHandler, isDone, setDone
   useEffect(() => {
     if (isDone) return
 
-    setTimeout(forceRerender, 1000)
+    const intervalId = setInterval(forceRerender, 1000)
+
+    return () => clearInterval(intervalId)
   }, [isDone, forceRerender])
 
   const stepName = (key: StepIndex) => StepNames[key as StepIndex]
