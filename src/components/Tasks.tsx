@@ -1,10 +1,9 @@
 import { Container } from "./sharedstyles"
-import { AvailableTimerCategories, Task, Timer, TimerCategory } from '../utils/types'
+import { AvailableTimerCategories, Task, Timer } from '../utils/types'
 import styled from "styled-components"
 import Subtask from "./Subtask"
 import { timersGroupedByCategory } from "../utils/helpers"
 import { useState } from "react"
-import build from "next/dist/build"
 
 const Tasks = ({ tasks }: { tasks: Task[] }) => {
   const orderedTasks = (): Task[] => JSON.parse(JSON.stringify(tasks)).reverse()

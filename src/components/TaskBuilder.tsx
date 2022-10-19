@@ -194,6 +194,7 @@ const Header = styled.div`
   }
 
   h1 {
+    margin-left: 4px;
     font-size: 1.8rem;
     text-transform: uppercase;
     font-weight: bold;

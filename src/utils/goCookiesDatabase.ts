@@ -19,9 +19,9 @@ const StepNames = {
 }
 
 const StepDoneWarnings = {
-  [StepIndex.First]: 'Virar!',
-  [StepIndex.Second]: 'Tirar!',
-  [StepIndex.Thirdy]: 'Pronto!',
+  [StepIndex.First]: 'Virar',
+  [StepIndex.Second]: 'Tirar',
+  [StepIndex.Thirdy]: 'Pronto',
 }
 
 const AvailableCookies: Timer[] = [

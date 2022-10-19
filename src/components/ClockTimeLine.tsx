@@ -1,8 +1,7 @@
-import { clear } from "console"
 import { useState, useEffect, useMemo } from "react"
 import styled from "styled-components"
 import { Categories, StepNames, StepDoneWarnings } from "../utils/goCookiesDatabase"
-import { StepIndex, TimerCategory, AvailableTimerCategories } from "../utils/types"
+import { StepIndex, AvailableTimerCategories } from "../utils/types"
 
 const ClockTimeLine = ({ timerCategory, startInMs, alarmHandler, isDone, setDone }:
   {

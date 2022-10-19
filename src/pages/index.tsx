@@ -51,6 +51,18 @@ const App: NextPage = () => {
 
       setStoredTasks(newValue)
 
+      if (window.Worker) {
+        const worker = new Worker('/taskNotificationSchedulerWorker.js')
+
+        worker.postMessage(newTask)
+
+        worker.onmessage = (e) => {
+          const audio = new Audio('/alarmSound.mp3')
+          audio.play()
+          setTimeout(() => { audio.pause() }, 5000)
+        }
+      }
+
       return newValue
     })
   }
