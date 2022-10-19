@@ -40,9 +40,14 @@ const ClockTimeLine = ({ timerCategory, startInMs, alarmHandler, isDone, setDone
   useEffect(() => {
     if (isDone) return
 
-    const intervalId = setInterval(forceRerender, 1000)
-
-    return () => clearInterval(intervalId)
+    if (window.Worker) {
+      const worker = new Worker('/setTimeoutWorker.js')
+      worker.postMessage(1000)
+      worker.onmessage = (_e) => forceRerender()
+    } else {
+      // TODO: use i18n
+      alert('ERRO: O seu navegador precisa suportar WebWorkers.')
+    }
   }, [isDone, forceRerender])
 
   const stepName = (key: StepIndex) => StepNames[key as StepIndex]
