@@ -43,7 +43,10 @@ const ClockTimeLine = ({ timerCategory, startInMs, alarmHandler, isDone, setDone
     if (window.Worker) {
       const worker = new Worker('/setTimeoutWorker.js')
       worker.postMessage(1000)
-      worker.onmessage = (_e) => forceRerender()
+      worker.onmessage = (_e) => {
+        forceRerender()
+        worker.terminate()
+      }
     } else {
       // TODO: use i18n
       alert('ERRO: O seu navegador precisa suportar WebWorkers.')
